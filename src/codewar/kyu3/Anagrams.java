@@ -27,11 +27,14 @@ import java.util.Map;
  *
  */
 public class Anagrams {
-	public BigInteger listPosition(String word) {
+	public static BigInteger listPosition(String word) {
+		int len = word.length();
+		if (len <=1) {
+			return BigInteger.ONE;
+		}
+		
 		char[] sortedChars = word.toCharArray();
 		Arrays.sort(sortedChars);
-		System.out.println(Arrays.toString(sortedChars));
-		
 		int count =0;
 		int index =0;
 		char curChar = sortedChars[0];
@@ -51,22 +54,39 @@ public class Anagrams {
 		//the last element
 		charIndexMap.put(curChar, index);
 		charCounts.add(count);
+				
+		BigInteger[] factorials = factorials = genFactorials(len);
 		
-		
-		int len = word.length();
+		int i = charIndexMap.get(word.charAt(0));
+		int charCountLeCurChar = 0;
+		BigInteger sum = BigInteger.ZERO;
+		BigInteger curSum =BigInteger.ZERO;
+		for (int j = 0; j < i; j++) {
+			int charCount = charCounts.get(j);
+			curSum = factorials[len-charCounts.get(i)];
+			for (int k = 0; k < len; k++) {
+				int curCharCount = k==j?charCounts.get(k)-1:charCounts.get(k);
+				if (curCharCount!=0 &&curCharCount!=1) {
+					curSum = curSum.divide(factorials[charCount]);
+				}
+			}
+			sum=sum.add(curSum);
+		}
+			
+		return sum.add(listPosition(word.substring(1)));
+	}
+
+	private static BigInteger[] genFactorials( int len) {
 		BigInteger[] factorials = new BigInteger[len];
 		factorials[0] =BigInteger.ONE;
 		for (int i = 1; i < len; i++) {
 			factorials[i] = factorials[i-1].multiply(BigInteger.valueOf(i));
 		}
-		for (int k=0;k<len-1;k++) {
-			int i = charIndexMap.get(word.charAt(k));
-			int charCountLeCurChar = 0;
-			for (int j = 0; j < i; j++) {
-				charCountLeCurChar +=charCounts.get(j);
-			}
-			
-		}
-		return BigInteger.ZERO;
+		return factorials;
+	}
+	
+	public static void main(String[] args) {
+//		listPosition("ghalglasjgla");
+		System.out.println(Arrays.toString(genFactorials(7)));
 	}
 }

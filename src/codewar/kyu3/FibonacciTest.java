@@ -69,7 +69,7 @@ public class FibonacciTest {
 	private static void testFib(long expected, long input) {
 		BigInteger found;
 		try {
-			found = Fibonacci.fib(BigInteger.valueOf(input));
+			found = Fibonacci.fib1(BigInteger.valueOf(input));
 		} catch (Throwable e) {
 			// see https://github.com/Codewars/codewars.com/issues/21
 			throw new AssertionError("exception during test: " + e, e);

@@ -23,24 +23,38 @@ import java.math.BigInteger;
  *
  */
 public class Fibonacci {
-	public static BigInteger fib(BigInteger n) {
-		return fibIter( BigInteger.ONE, BigInteger.ZERO, 0,1, n);
+	public static BigInteger fib1(BigInteger n) {
+		if(n.compareTo(BigInteger.ZERO)<0){
+			BigInteger res = fibIter( BigInteger.ONE, BigInteger.ZERO, BigInteger.ZERO,BigInteger.ONE,n.abs());
+			return n.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)
+						? res.negate():res;
+		}
+		return fibIter( BigInteger.ONE, BigInteger.ZERO, BigInteger.ZERO,BigInteger.ONE, n);
 	}
 	
 	
-	public static BigInteger fib1(BigInteger n) {
-		BigInteger a =BigInteger.ONE,b=BigInteger.ZERO,count=n,tmpBigInteger=BigInteger.ZERO;
-		int p=0,q=1,tmp=0;
+	public static BigInteger fib(BigInteger n) {
+		if(n.compareTo(BigInteger.ZERO)<0){
+			return n.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)
+						? fib(n.abs()).negate():fib(n.abs());
+		}
+		
+		BigInteger a=BigInteger.ONE, 
+				q=BigInteger.ONE,
+				b=BigInteger.ZERO,
+				p=BigInteger.ZERO,
+				count=n,
+				tmpBigInteger=BigInteger.ZERO;
 		
 		while (!BigInteger.ZERO.equals(count) ) {
 			if (count.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)) {
-				tmp=p*p+q*q;
-				q=(p>>1+q)*q;
-				p=tmp;
+				tmpBigInteger=p.multiply(p).add(q.multiply(q));
+				q=p.multiply(BigInteger.valueOf(2)).add(q).multiply(q);
+				p=tmpBigInteger;
 				count=count.divide(BigInteger.valueOf(2));
 			}else {
-				tmpBigInteger=b.multiply(BigInteger.valueOf(q)).add(a.multiply(BigInteger.valueOf(q))).add(a.multiply(BigInteger.valueOf(p)));
-				b=b.multiply(BigInteger.valueOf(p)).add(a.multiply(BigInteger.valueOf(q)));
+				tmpBigInteger=b.multiply(q).add(a.multiply(q)).add(a.multiply(p));
+				b=b.multiply(p).add(a.multiply(q));
 				a=tmpBigInteger;
 				count=count.subtract(BigInteger.ONE);
 			}
@@ -78,20 +92,24 @@ public class Fibonacci {
 	}
 	
 	public static BigInteger fibIter(BigInteger a,BigInteger b ,
-			int p,int q,BigInteger count) {
+			BigInteger p,BigInteger q,BigInteger count) {
 		if (BigInteger.ZERO.equals(count) ) {
 			return b;
 		}else if (count.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)) {
-			return fibIter(a, b, p*p+q*q,
-					(p>>1+q)*q,
+			return fibIter(a, b, p.multiply(p).add(q.multiply(q)),
+					p.multiply(BigInteger.valueOf(2)).add(q).multiply(q),
 					count.divide(BigInteger.valueOf(2)));
 		}else {
-			return fibIter(b.multiply(BigInteger.valueOf(q)).add(a.multiply(BigInteger.valueOf(q))).add(a.multiply(BigInteger.valueOf(p))),
-					b.multiply(BigInteger.valueOf(p)).add(a.multiply(BigInteger.valueOf(q))), p, q, count.subtract(BigInteger.ONE));
+			return fibIter(b.multiply(q).add(a.multiply(q)).add(a.multiply(p)),
+					b.multiply(p).add(a.multiply(q)), p, q, count.subtract(BigInteger.ONE));
 		}
 	}
 	public static void main(String[] args) {
-		fib(BigInteger.valueOf(-3));
+		for (int i = -100; i < 100; i++) {
+			System.out.println(i+" "+fib(BigInteger.valueOf(i)));
+		}
+		System.out.println();
+//		fib(BigInteger.valueOf(-3));
 //		System.out.println( BigInteger.valueOf(-9).divide(BigInteger.valueOf(2)));
 	}
 }
